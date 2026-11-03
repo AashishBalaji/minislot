@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minislot-cm
+  labels:
+    app: minislot-cm
+spec:
+  replicas: 5  # simulates 5 cable modems against the one CMTS - bump this to load-test the scheduler
+  selector:
+    matchLabels:
+      app: minislot-cm
+  template:
+    metadata:
+      labels:
+        app: minislot-cm
+    spec:
+      containers:
+        - name: cm
+          image: minislot-cm:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: CMTS_HOST
+              value: "cmts"  # matches k8s/cmts-service.yaml's Service name
+            - name: CMTS_PORT
+              value: "9000"
+            - name: CM_LABEL
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name  # each replica logs under its own pod name
+            - name: REQUESTED_BPS
+              value: "1000000"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 16Mi
+            limits:
+              cpu: 200m
+              memory: 64Mi

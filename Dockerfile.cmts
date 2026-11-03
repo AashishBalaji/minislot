@@ -1,0 +1,15 @@
+FROM ubuntu:24.04 AS build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential cmake libgtest-dev && rm -rf /var/lib/apt/lists/*
+WORKDIR /src
+COPY CMakeLists.txt .
+COPY include include
+COPY src src
+COPY test test
+RUN cmake -B build -DCMAKE_BUILD_TYPE=Release . && cmake --build build --target cmts -j
+
+FROM ubuntu:24.04
+COPY --from=build /src/build/cmts /usr/local/bin/cmts
+EXPOSE 9000/udp
+ENTRYPOINT ["/usr/local/bin/cmts"]
+CMD ["9000"]

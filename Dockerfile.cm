@@ -1,0 +1,21 @@
+FROM ubuntu:24.04 AS build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential cmake libgtest-dev && rm -rf /var/lib/apt/lists/*
+WORKDIR /src
+COPY CMakeLists.txt .
+COPY include include
+COPY src src
+COPY test test
+RUN cmake -B build -DCMAKE_BUILD_TYPE=Release . && cmake --build build --target cm -j
+
+FROM ubuntu:24.04
+COPY --from=build /src/build/cm /usr/local/bin/cm
+# CMTS_HOST/PORT/LABEL/REQUESTED_BPS are set per-replica by the Kubernetes
+# manifest (see k8s/cm-deployment.yaml) via env vars, read here by the shell
+# form of ENTRYPOINT so each pod can be told who to connect to and how much
+# bandwidth to request without baking either into the image.
+ENV CMTS_HOST=cmts
+ENV CMTS_PORT=9000
+ENV CM_LABEL=cm
+ENV REQUESTED_BPS=1000000
+ENTRYPOINT ["/bin/sh", "-c", "exec /usr/local/bin/cm \"$CMTS_HOST\" \"$CMTS_PORT\" \"$CM_LABEL\" \"$REQUESTED_BPS\""]

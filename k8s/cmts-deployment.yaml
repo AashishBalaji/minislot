@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minislot-cmts
+  labels:
+    app: minislot-cmts
+spec:
+  replicas: 1  # a CMTS is the shared headend for its CMs - not horizontally scaled in this demo
+  selector:
+    matchLabels:
+      app: minislot-cmts
+  template:
+    metadata:
+      labels:
+        app: minislot-cmts
+    spec:
+      containers:
+        - name: cmts
+          image: minislot-cmts:latest
+          imagePullPolicy: IfNotPresent
+          args: ["9000"]
+          ports:
+            - containerPort: 9000
+              protocol: UDP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 32Mi
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          readinessProbe:
+            # The CMTS has no HTTP endpoint to probe (it's a UDP service),
+            # so readiness is "the process is still running" via a simple
+            # port-open check from inside the container.
+            exec:
+              command: ["sh", "-c", "echo > /dev/udp/127.0.0.1/9000"]
+            initialDelaySeconds: 2
+            periodSeconds: 10

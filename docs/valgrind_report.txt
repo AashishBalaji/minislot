@@ -1,0 +1,73 @@
+==744== Memcheck, a memory error detector
+==744== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==744== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==744== Command: ./minislot_tests
+==744== 
+Running main() from ./googletest/src/gtest_main.cc
+[==========] Running 22 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from MessageSerialization
+[ RUN      ] MessageSerialization.RoundTripsRngReq
+[       OK ] MessageSerialization.RoundTripsRngReq (9 ms)
+[ RUN      ] MessageSerialization.RoundTripsMapWithGrants
+[       OK ] MessageSerialization.RoundTripsMapWithGrants (4 ms)
+[ RUN      ] MessageSerialization.RoundTripsNegativeOffsets
+[       OK ] MessageSerialization.RoundTripsNegativeOffsets (1 ms)
+[ RUN      ] MessageSerialization.RejectsTruncatedBuffer
+[       OK ] MessageSerialization.RejectsTruncatedBuffer (1 ms)
+[ RUN      ] MessageSerialization.RejectsUnknownMessageType
+[       OK ] MessageSerialization.RejectsUnknownMessageType (0 ms)
+[ RUN      ] MessageSerialization.RejectsGrantCountBeyondCapacity
+[       OK ] MessageSerialization.RejectsGrantCountBeyondCapacity (0 ms)
+[----------] 6 tests from MessageSerialization (22 ms total)
+
+[----------] 9 tests from CmStateMachine
+[ RUN      ] CmStateMachine.StartsInInit
+[       OK ] CmStateMachine.StartsInInit (0 ms)
+[ RUN      ] CmStateMachine.FirstRequestMovesToRanging
+[       OK ] CmStateMachine.FirstRequestMovesToRanging (1 ms)
+[ RUN      ] CmStateMachine.RangingContinueStaysInRanging
+[       OK ] CmStateMachine.RangingContinueStaysInRanging (1 ms)
+[ RUN      ] CmStateMachine.RangingSuccessMovesToRegistering
+[       OK ] CmStateMachine.RangingSuccessMovesToRegistering (1 ms)
+[ RUN      ] CmStateMachine.RangingAbortMovesToFailedTerminal
+[       OK ] CmStateMachine.RangingAbortMovesToFailedTerminal (1 ms)
+[ RUN      ] CmStateMachine.RegistrationAcceptedMovesToOperationalAndAdoptsAssignedId
+[       OK ] CmStateMachine.RegistrationAcceptedMovesToOperationalAndAdoptsAssignedId (2 ms)
+[ RUN      ] CmStateMachine.RegistrationRejectedMovesToFailed
+[       OK ] CmStateMachine.RegistrationRejectedMovesToFailed (1 ms)
+[ RUN      ] CmStateMachine.OperationalBuildsNoOutgoingRequest
+[       OK ] CmStateMachine.OperationalBuildsNoOutgoingRequest (1 ms)
+[ RUN      ] CmStateMachine.WrongMessageTypeForStateIsIgnored
+[       OK ] CmStateMachine.WrongMessageTypeForStateIsIgnored (1 ms)
+[----------] 9 tests from CmStateMachine (13 ms total)
+
+[----------] 7 tests from CmtsScheduler
+[ RUN      ] CmtsScheduler.RangingTakesTwoRoundsThenSucceeds
+[       OK ] CmtsScheduler.RangingTakesTwoRoundsThenSucceeds (10 ms)
+[ RUN      ] CmtsScheduler.DifferentPeersTrackRangingRoundsIndependently
+[       OK ] CmtsScheduler.DifferentPeersTrackRangingRoundsIndependently (2 ms)
+[ RUN      ] CmtsScheduler.RegistrationAssignsIncreasingUniqueIds
+[       OK ] CmtsScheduler.RegistrationAssignsIncreasingUniqueIds (4 ms)
+[ RUN      ] CmtsScheduler.MapGrantsCoverAllRegisteredCms
+[       OK ] CmtsScheduler.MapGrantsCoverAllRegisteredCms (6 ms)
+[ RUN      ] CmtsScheduler.ProportionalFairGivesMoreSlotsToHigherRequest
+[       OK ] CmtsScheduler.ProportionalFairGivesMoreSlotsToHigherRequest (3 ms)
+[ RUN      ] CmtsScheduler.EvenTheLowestRequesterGetsAFloorGrant
+[       OK ] CmtsScheduler.EvenTheLowestRequesterGetsAFloorGrant (2 ms)
+[ RUN      ] CmtsScheduler.NoRegisteredCmsProducesEmptyMap
+[       OK ] CmtsScheduler.NoRegisteredCmsProducesEmptyMap (1 ms)
+[----------] 7 tests from CmtsScheduler (32 ms total)
+
+[----------] Global test environment tear-down
+[==========] 22 tests from 3 test suites ran. (95 ms total)
+[  PASSED  ] 22 tests.
+==744== 
+==744== HEAP SUMMARY:
+==744==     in use at exit: 0 bytes in 0 blocks
+==744==   total heap usage: 598 allocs, 598 frees, 152,216 bytes allocated
+==744== 
+==744== All heap blocks were freed -- no leaks are possible
+==744== 
+==744== For lists of detected and suppressed errors, rerun with: -s
+==744== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential cmake libgtest-dev
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo .
+
+      - name: Build
+        run: cmake --build build -j
+
+      - name: Run unit tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python test dependencies
+        run: pip install -r python/requirements.txt
+
+      - name: Run integration tests (real cmts/cm subprocesses)
+        run: |
+          cd python
+          python3 -m pytest test_integration.py -v
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build cmts image
+        run: docker build -f Dockerfile.cmts -t minislot-cmts:ci .
+
+      - name: Build cm image
+        run: docker build -f Dockerfile.cm -t minislot-cm:ci .
